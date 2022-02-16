@@ -50,14 +50,72 @@ const StyledTableCell = withStyles((theme) => ({
       let row=Props.row
       let view= ""
       
-      
-      
+      const handleSelectAllClick = (event) => {
+        if (event.target.checked) {
+          const newSelecteds = Props.map((n) => n.Id);
+          Props.setSelected(newSelecteds);
+          return;
+        }
+        Props.setSelected([]);
+      };
+    
+      const handleClick = (event, name) => {
+        const selectedIndex = Props.selected.indexOf(name);
+        let newSelected = [];
+    
+        if (selectedIndex === -1) {
+          newSelected = newSelected.concat(Props.selected, name);
+          if(name.length>2){
+            newSelected.push(name.substring(0,2))
+            newSelected.push(name.substring(0,1))
+          }
+          if(name.length===2){
+            newSelected.push(name.substring(0,1))
+            newSelected = newSelected.concat(Props.selected,indexarray(name,5));
+           
+          }
+        } else if (selectedIndex === 0) {
+          newSelected = newSelected.concat(Props.selected.slice(1));
+        } else if (selectedIndex === Props.selected.length - 1) {
+          newSelected = newSelected.concat(Props.selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+          newSelected = newSelected.concat(
+            Props.selected.slice(0, selectedIndex),
+            Props.selected.slice(selectedIndex + 1),
+          );
+        }
+          
+       
+    
+        Props.setSelected(newSelected);
+      };
+     const indexarray=(id,length)=>{
+        let arr=[]
+            let i=0;
+            while(i<length) {
+              const newid=id+String(i)
+                arr.push(newid)
+              i++
+            }
+            return arr;
+
+      }
+      const isSelected = (name) => Props.selected.indexOf(name) !== -1;
+      const isItemSelected = isSelected(row.Id);
+      const labelId = `enhanced-table-checkbox-${row.Id}`;
     return <>
-        <StyledTableRow  key={row.Id} style={{height:"80px"}}>
-            <StyledTableCell >
-                <Canview  row={row} view={view} subRows={row.subRows}/>
-                
-                </StyledTableCell>
+        <StyledTableRow  key={row.Id} hover
+                      onClick={(event) => handleClick(event, row.Id)}
+                      role="checkbox"
+                      selected={isItemSelected}
+                      aria-checked={isItemSelected}
+                      aria-checked={isItemSelected} style={{height:"80px"}}>
+            <StyledTableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                  </StyledTableCell>
               <StyledTableCell component="th" scope="row" style={{paddingRight:"20px"}}>
                 {row.firstName}
               </StyledTableCell>
@@ -68,7 +126,7 @@ const StyledTableCell = withStyles((theme) => ({
             </StyledTableRow>
             
           
-           <Childrow Id={row.Id} view={view} subRows={row.subRows}/>
+           <Childrow selected={Props.selected} setSelected={Props.setSelected} Id={row.Id} view={view} subRows={row.subRows}/>
           
     </>
   }
@@ -86,7 +144,7 @@ const StyledTableCell = withStyles((theme) => ({
             <div style={{height:"80px",width:"2px",backgroundColor:"darkcyan" }}></div>
             <div style={{height:"2px",width:"80px",backgroundColor:"darkcyan"}}></div>
             <div style={{minWidth:"700px"}}>
-            <Row  row={row}/>
+            <Row selected={props.selected} setSelected={props.setSelected}  row={row}/>
             </div>
             </div>)}
             )

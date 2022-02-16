@@ -9,6 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import makeData from './makeData';
+import Checkbox from '@material-ui/core/Checkbox';
 import Row from './Row'
 const StyledTableCell = withStyles((theme) => ({
   head: {
@@ -49,6 +50,12 @@ const useStyles = makeStyles({
 
 export default function CustomizedTables() {
   const classes = useStyles();
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('calories');
+  const [selected, setSelected] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [dense, setDense] = React.useState(false);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const data = React.useMemo(() => makeData(5, 5, 5), [])
   return (
     <TableContainer component={Paper}>
@@ -56,7 +63,7 @@ export default function CustomizedTables() {
         <TableHead>
           <div>
             <TableRow>
-          <StyledTableCell style={{paddingLeft:"40px"}}></StyledTableCell>
+          <StyledTableCell style={{paddingLeft:"40px"}}><Checkbox style={{color:"darkcyan"}}/></StyledTableCell>
             <StyledTableCell style={{paddingLeft:"40px"}}>Dessert (100g serving)</StyledTableCell>
             <StyledTableCell style={{paddingLeft:"40px"}} >Calories</StyledTableCell>
             <StyledTableCell style={{paddingLeft:"40px"}}>Fat&nbsp;(g)</StyledTableCell>
@@ -73,7 +80,7 @@ export default function CustomizedTables() {
             
             return (
             <div key={i}>
-              <div key={i}><Row key={i} row={row}/></div>
+              <div key={i}><Row data={data} selected={selected} setSelected={setSelected} key={i} row={row}/></div>
             </div>
            
           )})}
